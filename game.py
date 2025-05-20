@@ -185,9 +185,12 @@ class Game:
     
     def handle_player_elimination(self, data):
         if data['player'] in self.other_players:
-            self.other_players[data['player']].alive = False
-        elif str(self.player_number) == str(data['player']):
+            tank = self.other_players[data['player']]
+            tank.alive = False
+            tank.lives = data.get('lives', tank.lives)
+        elif self.network.sio.sid == data['player']:  # Acceder al SID a través de sio
             self.player.alive = False
+            self.player.lives = data.get('lives', self.player.lives)
 
 if __name__ == '__main__':
     game = Game()

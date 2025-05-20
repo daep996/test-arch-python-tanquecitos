@@ -17,7 +17,8 @@ def connect(sid, environ):
             'position': PLAYER_POSITIONS[player_number],
             'angle': 0,
             'player_number': player_number,
-            'alive': True
+            'alive': True,
+            'lives': 3
         }
         # Enviar información inicial al jugador
         sio.emit('player_number', {
@@ -59,11 +60,14 @@ def player_hit(sid, data):
     if sid in players and 'target' in data:
         target_sid = data['target']
         if target_sid in players:
-            players[target_sid]['alive'] = False
-            sio.emit('player_eliminated', {
-                'player': target_sid,
-                'eliminated_by': sid
-            })
+            if players[target_sid]['alive']:
+                players[target_sid]['alive'] = False
+                players[target_sid]['lives'] -= 1
+                sio.emit('player_eliminated', {
+                    'player': target_sid,
+                    'eliminated_by': sid,
+                    'lives': players[target_sid]['lives']
+                })
 
 if __name__ == '__main__':
     print(f"Starting server on port 5000...")

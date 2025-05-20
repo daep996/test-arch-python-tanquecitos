@@ -53,7 +53,6 @@ class Tank(pygame.sprite.Sprite):
             current_time = time.time()
             if current_time - self.respawn_time >= self.respawn_delay:
                 self.alive = True
-                self.lives -= 1
         self.rect.topleft = self.pos
         
     def draw(self, surface):
