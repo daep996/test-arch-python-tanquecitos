@@ -101,17 +101,25 @@ class Game:
             return
 
         if self.player:
-            # Mostrar información del jugador local en blanco
-            lives_surf = self.font.render(f"P{self.player_number + 1} Lives: {self.player.lives}", True, WHITE)
-            self.screen.blit(lives_surf, (10, 10))
+            # Crear una lista de todos los jugadores incluyendo el local
+            all_players = [(self.player_number, self.player)]
+            all_players.extend([(tank.player_number, tank) for tank in self.other_players.values()])
             
-            # Mostrar información de otros jugadores en amarillo
-            y_offset = 40
-            for sid, tank in self.other_players.items():
+            # Ordenar por número de jugador
+            all_players.sort(key=lambda x: x[0])
+            
+            # Mostrar información de todos los jugadores ordenados
+            y_offset = 10
+            for player_num, tank in all_players:
+                # Usar color blanco para el jugador local, amarillo para los demás
+                color = WHITE if tank == self.player else YELLOW
+                if not tank.alive:
+                    color = SCORE_COLOR
+                    
                 player_info = self.font.render(
-                    f"P{tank.player_number + 1} Lives: {tank.lives}",
+                    f"P{player_num + 1} Lives: {tank.lives}",
                     True,
-                    YELLOW if tank.alive else SCORE_COLOR
+                    color
                 )
                 self.screen.blit(player_info, (10, y_offset))
                 y_offset += 30
