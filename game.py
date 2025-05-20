@@ -14,12 +14,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
         self.game_active = True
-        
         # Grupos de sprites
         self.all_sprites = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.tanks = pygame.sprite.Group()
-        
         # Variables de red
         self.network = NetworkManager(self)
         self.multiplayer_ready = False
@@ -27,14 +25,11 @@ class Game:
         self.other_players = {}
         self.player_number = 0  # Valor por defecto hasta que el servidor asigne uno
         
-        # Cargar recursos
         self.load_resources()
         
         # Conectar al servidor
         if not self.network.connect_to_server():
             print("No se pudo conectar al servidor")
-        # Cargar recursos
-        self.load_resources()
         
     def load_resources(self):
         self.background = pygame.image.load('assets/bk.png').convert()
@@ -51,16 +46,13 @@ class Game:
             
         keys = pygame.key.get_pressed()
         current_time = time.time()
-        
-        # Actualizar jugador
+
         if self.player.alive and self.player.handle_input(keys, current_time, self.tanks):
             self.shoot()
             
-        # Actualizar sprites
         self.all_sprites.update()
         self.bullets.update()
         
-        # Verificar colisiones
         self.check_collisions()
         
         # Enviar actualización de estado al servidor
@@ -84,9 +76,9 @@ class Game:
                 
             hits = pygame.sprite.spritecollide(bullet, self.tanks, False)
             for tank in hits:
-                if tank != self.player and tank.alive:  # Solo procesar hits en otros tanques
+                if tank != self.player and tank.alive:
                     bullet.explode()
-                    if isinstance(tank, Tank):  # Si es un tanque enemigo
+                    if isinstance(tank, Tank):
                         for sid, enemy_tank in self.other_players.items():
                             if enemy_tank == tank:
                                 self.network.report_hit(sid)
@@ -94,24 +86,17 @@ class Game:
         
     def display_score(self):
         if not self.multiplayer_ready:
-            # Mostrar mensaje de "Conectando..."
             connecting_text = self.font.render("Conectando al servidor...", True, YELLOW)
             text_rect = connecting_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
             self.screen.blit(connecting_text, text_rect)
             return
 
         if self.player:
-            # Crear una lista de todos los jugadores incluyendo el local
             all_players = [(self.player_number, self.player)]
             all_players.extend([(tank.player_number, tank) for tank in self.other_players.values()])
-            
-            # Ordenar por número de jugador
             all_players.sort(key=lambda x: x[0])
-            
-            # Mostrar información de todos los jugadores ordenados
             y_offset = 10
             for player_num, tank in all_players:
-                # Usar color blanco para el jugador local, amarillo para los demás
                 color = WHITE if tank == self.player else YELLOW
                 if not tank.alive:
                     color = SCORE_COLOR
@@ -152,7 +137,6 @@ class Game:
         sys.exit()
         
     def setup_multiplayer(self, player_number, total_players):
-        # Crear el tanque del jugador con el número correcto
         self.player = PlayerTank(*PLAYER_POSITIONS[player_number], player_number)
         self.tanks.add(self.player)
         self.all_sprites.add(self.player)
@@ -160,15 +144,14 @@ class Game:
         self.multiplayer_ready = True
         
     def update_players_list(self, players_data):
-        # Actualizar lista de jugadores conectados
         for sid, data in players_data.items():
             if data['player_number'] != self.player_number and sid not in self.other_players:
                 player_num = data['player_number']
                 # Asegurar que cada jugador use su tanque correspondiente
                 sprite_path = f'assets/tank{player_num + 1}.png'
                 new_tank = Tank(*PLAYER_POSITIONS[player_num], 
-                              sprite_path, player_num)
-                new_tank.player_number = player_num  # Asegurar que el número de jugador esté establecido
+                    sprite_path, player_num)
+                new_tank.player_number = player_num
                 self.other_players[sid] = new_tank
                 self.tanks.add(new_tank)
                 self.all_sprites.add(new_tank)
@@ -195,10 +178,10 @@ class Game:
         if data['player'] in self.other_players:
             tank = self.other_players[data['player']]
             tank.alive = False
-            tank.lives = data.get('lives', tank.lives)
-        elif self.network.sio.sid == data['player']:  # Acceder al SID a través de sio
+            tank.lives = data['lives']
+        elif self.network.sio.sid == data['player']:
             self.player.alive = False
-            self.player.lives = data.get('lives', self.player.lives)
+            self.player.lives = data['lives']
 
 if __name__ == '__main__':
     game = Game()
