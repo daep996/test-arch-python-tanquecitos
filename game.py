@@ -111,9 +111,14 @@ class Game:
                 
             # Mostrar mensaje si el jugador está eliminado
             if not self.player.alive:
-                respawn_text = self.font.render("Respawning...", True, YELLOW)
-                text_rect = respawn_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
-                self.screen.blit(respawn_text, text_rect)
+                if self.player.lives <= 0:
+                    game_over_text = self.font.render("GAME OVER", True, YELLOW)
+                    text_rect = game_over_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
+                    self.screen.blit(game_over_text, text_rect)
+                else:
+                    respawn_text = self.font.render("Respawning...", True, YELLOW)
+                    text_rect = respawn_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
+                    self.screen.blit(respawn_text, text_rect)
         
     def draw(self):
         self.screen.blit(self.background, (0, 0))
@@ -179,9 +184,14 @@ class Game:
             tank = self.other_players[data['player']]
             tank.alive = False
             tank.lives = data['lives']
+            if tank.lives <= 0:
+                tank.kill()  # Eliminar el tanque del juego
         elif self.network.sio.sid == data['player']:
             self.player.alive = False
             self.player.lives = data['lives']
+            if self.player.lives <= 0:
+                self.player.kill()  # Eliminar el tanque del jugador
+                self.game_active = False  # Detener el juego para este jugador
 
 if __name__ == '__main__':
     game = Game()

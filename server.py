@@ -63,11 +63,26 @@ def player_hit(sid, data):
             if players[target_sid]['alive']:
                 players[target_sid]['alive'] = False
                 players[target_sid]['lives'] -= 1
-                sio.emit('player_eliminated', {
-                    'player': target_sid,
-                    'eliminated_by': sid,
-                    'lives': players[target_sid]['lives']
-                })
+                
+                # Si el jugador se queda sin vidas, eliminarlo del juego
+                if players[target_sid]['lives'] <= 0:
+                    del players[target_sid]
+                    sio.emit('player_eliminated', {
+                        'player': target_sid,
+                        'eliminated_by': sid,
+                        'lives': 0,
+                        'game_over': True
+                    })
+                else:
+                    sio.emit('player_eliminated', {
+                        'player': target_sid,
+                        'eliminated_by': sid,
+                        'lives': players[target_sid]['lives'],
+                        'game_over': False
+                    })
+                
+                # Actualizar la lista de jugadores para todos
+                sio.emit('players_update', players)
 
 if __name__ == '__main__':
     print(f"Starting server on port 5000...")

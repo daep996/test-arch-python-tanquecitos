@@ -30,6 +30,9 @@ class NetworkManager:
 
         def on_player_eliminated(data):
             self.game.handle_player_elimination(data)
+            # Si es game over, desconectar al jugador
+            if data.get('game_over', False) and self.sio.sid == data['player']:
+                self.disconnect()
 
         # Registrar los eventos
         self.sio.on('connect', on_connect)
