@@ -65,7 +65,7 @@ class PlayerTank(Tank):
         sprite_path = f'assets/tank{player_number + 1}.png'  # tank1.png, tank2.png, etc.
         super().__init__(x, y, sprite_path, player_number)
         self.last_shot_time = 0
-        self.shot_delay = 0.25
+        self.shot_delay = 0.5
     
     def handle_input(self, keys, current_time, other_tanks=None):
         if not self.alive:
