@@ -101,11 +101,11 @@ class Game:
             return
 
         if self.player:
-            # Mostrar información del jugador local
-            lives_surf = self.font.render(f"P{self.player_number + 1} Lives: {self.player.lives}", True, YELLOW)
+            # Mostrar información del jugador local en blanco
+            lives_surf = self.font.render(f"P{self.player_number + 1} Lives: {self.player.lives}", True, WHITE)
             self.screen.blit(lives_surf, (10, 10))
             
-            # Mostrar información de otros jugadores
+            # Mostrar información de otros jugadores en amarillo
             y_offset = 40
             for sid, tank in self.other_players.items():
                 player_info = self.font.render(

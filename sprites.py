@@ -74,16 +74,16 @@ class PlayerTank(Tank):
         dx = dy = 0
         if keys[pygame.K_LEFT]:
             self.rotate(90)
-            dx = -self.speed
+            dx -= self.speed
         if keys[pygame.K_RIGHT]:
             self.rotate(270)
-            dx = self.speed
+            dx += self.speed
         if keys[pygame.K_UP]:
             self.rotate(0)
-            dy = -self.speed
+            dy -= self.speed
         if keys[pygame.K_DOWN]:
             self.rotate(180)
-            dy = self.speed
+            dy += self.speed
         
         if dx != 0 or dy != 0:
             self.move(dx, dy, other_tanks)
