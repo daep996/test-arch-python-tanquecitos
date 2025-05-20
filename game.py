@@ -9,6 +9,8 @@ from network import NetworkManager
 class Game:
     def __init__(self):
         pygame.init()
+        # Deshabilitar el sistema de audio
+        pygame.mixer.quit()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Tanquecitos')
         self.clock = pygame.time.Clock()
