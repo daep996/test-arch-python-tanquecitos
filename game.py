@@ -124,7 +124,13 @@ class Game:
         self.screen.blit(self.background, (0, 0))
         
         if self.game_active:
-            self.all_sprites.draw(self.screen)
+            # Verificar que los sprites sean válidos antes de dibujarlos
+            valid_sprites = [sprite for sprite in self.all_sprites if (hasattr(sprite, 'alive') and sprite.alive) or not hasattr(sprite, 'alive')]
+            for sprite in valid_sprites:
+                if hasattr(sprite, 'draw'):
+                    sprite.draw(self.screen)
+                else:
+                    self.screen.blit(sprite.image, sprite.rect)
             self.display_score()
         else:
             self.screen.fill(BLACK)
@@ -185,12 +191,19 @@ class Game:
             tank.alive = False
             tank.lives = data['lives']
             if tank.lives <= 0:
-                tank.kill()  # Eliminar el tanque del juego
+                # Remover el tanque de todos los grupos de sprites
+                tank.kill()
+                self.tanks.remove(tank)
+                self.all_sprites.remove(tank)
+                del self.other_players[data['player']]
         elif self.network.sio.sid == data['player']:
             self.player.alive = False
             self.player.lives = data['lives']
             if self.player.lives <= 0:
-                self.player.kill()  # Eliminar el tanque del jugador
+                # Remover el tanque del jugador de todos los grupos de sprites
+                self.player.kill()
+                self.tanks.remove(self.player)
+                self.all_sprites.remove(self.player)
                 self.game_active = False  # Detener el juego para este jugador
 
 if __name__ == '__main__':

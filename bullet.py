@@ -8,7 +8,9 @@ class Bullet(pygame.sprite.Sprite):
         # Cargar imágenes
         self.bullet_image = pygame.image.load('assets/bullet.png').convert_alpha()
         self.shot_image = pygame.image.load('assets/shot.png').convert_alpha()
-        self.image = self.bullet_image
+        self.original_bullet = self.bullet_image.copy()
+        self.original_shot = self.shot_image.copy()
+        self.image = self.bullet_image.copy()
         self.rect = self.image.get_rect(center=(x, y))
         self.pos = pygame.math.Vector2(x, y)
         self.angle = angle
@@ -62,7 +64,7 @@ class Bullet(pygame.sprite.Sprite):
             self.active = False
             self.showing_explosion = True
             self.explosion_time = time.time()
-            self.image = self.shot_image
+            self.image = self.original_shot.copy()
             # Ajustar el rectángulo para la explosión
             old_center = self.rect.center
             self.rect = self.image.get_rect()
@@ -72,7 +74,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.active:
             self.move()
             # Rotar la imagen de la bala
-            rotated = pygame.transform.rotate(self.bullet_image, self.angle)
+            rotated = pygame.transform.rotate(self.original_bullet, self.angle)
             old_center = self.rect.center
             self.image = rotated
             self.rect = self.image.get_rect()

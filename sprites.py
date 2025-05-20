@@ -5,8 +5,8 @@ from config import SCREEN_WIDTH, SCREEN_HEIGHT
 class Tank(pygame.sprite.Sprite):
     def __init__(self, x, y, sprite_path, player_number=0):
         super().__init__()
-        self.image = pygame.image.load(sprite_path).convert_alpha()
-        self.original_image = self.image
+        self.original_image = pygame.image.load(sprite_path).convert_alpha()
+        self.image = self.original_image.copy()
         self.rect = self.image.get_rect(topleft=(x, y))
         self.pos = pygame.math.Vector2(x, y)
         self.angle = 0
@@ -41,6 +41,7 @@ class Tank(pygame.sprite.Sprite):
     
     def rotate(self, angle):
         self.angle = angle
+        # Crear una nueva superficie para la imagen rotada
         self.image = pygame.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
     
@@ -57,7 +58,9 @@ class Tank(pygame.sprite.Sprite):
         
     def draw(self, surface):
         if self.alive:
-            surface.blit(self.image, self.rect)
+            # Asegurarse de que la superficie no esté bloqueada
+            if not surface.get_locked():
+                surface.blit(self.image, self.rect)
 
 class PlayerTank(Tank):
     def __init__(self, x, y, player_number=0):
