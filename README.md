@@ -21,7 +21,7 @@ Un juego multijugador de tanques desarrollado con Python, Pygame y Socket.IO que
 
 1. Clonar el repositorio:
 ```bash
-git clone [URL_DEL_REPOSITORIO]
+git clone https://github.com/daep996/test-arch-python-tanquecitos
 cd test-pygame
 ```
 
@@ -40,9 +40,9 @@ pip install -r requirements.txt
 
 ### Paquetes usados:
 
-- pygame==2.5.2: Para el desarrollo del juego y la interfaz gráfica
-- python-socketio==5.11.1: Para la comunicación en tiempo real entre cliente y servidor
-- eventlet==0.35.2: Para el servidor asíncrono de Socket.IO
+- pygame: Para el desarrollo del juego y la interfaz gráfica
+- python-socketio: Para la comunicación en tiempo real entre cliente y servidor
+- eventlet: Para el servidor asíncrono de Socket.IO
 
 ## 🎮 Ejecución
 
